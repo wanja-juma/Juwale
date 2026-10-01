@@ -2,6 +2,7 @@ import os
 import sqlite3
 
 from flask import Flask, jsonify
+from seed import register_seed_command
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
@@ -33,6 +34,10 @@ def create_app():
     import models
 
     migrate.init_app(app, db)
+
+    from seed import register_seed_command
+
+    register_seed_command(app)
 
     @app.get("/api/health")
     def health_check():
