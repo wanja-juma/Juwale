@@ -39,6 +39,10 @@ def create_app():
 
     register_seed_command(app)
 
+    from routes import api
+
+    app.register_blueprint(api, url_prefix="/api")
+
     @app.get("/api/health")
     def health_check():
         return jsonify({
