@@ -1,0 +1,132 @@
+.products-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  color: #1f2937;
+}
+
+.products-page__header {
+  margin-bottom: 32px;
+}
+
+.products-page__brand {
+  margin: 0 0 12px;
+  color: #b9470c;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.products-page__header h1 {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.products-page__header > p:last-child,
+.products-page__count {
+  color: #616975;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 4%);
+}
+
+.product-card__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background: #fff3e8;
+}
+
+.product-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.product-card__placeholder {
+  color: #b9470c;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.product-card__content {
+  padding: 20px;
+}
+
+.product-card__content h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.product-card__description {
+  color: #616975;
+  line-height: 1.6;
+}
+
+.product-card__price {
+  color: #b9470c;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.product-card__stock {
+  color: #166534;
+  font-size: 14px;
+}
+
+.product-card__stock--empty {
+  color: #b91c1c;
+}
+
+.products-message {
+  padding: 24px;
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.products-message--error {
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.products-message button {
+  padding: 10px 18px;
+  color: #ffffff;
+  background: #b9470c;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.products-message button:hover {
+  background: #963909;
+}
+
+.products-message button:focus-visible {
+  outline: 3px solid #1f2937;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .products-page {
+    padding: 24px 16px;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
