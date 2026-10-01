@@ -121,6 +121,35 @@
   outline-offset: 3px;
 }
 
+.product-card__link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+}
+
+.product-card__link:focus-visible {
+  outline: 3px solid #b9470c;
+  outline-offset: -3px;
+  border-radius: 14px;
+}
+
+.product-card__view {
+  color: #a63e0a;
+  font-weight: 600;
+}
+
 @media (max-width: 600px) {
   .products-page {
     padding: 24px 16px;

@@ -17,3 +17,21 @@ export async function getProducts(signal) {
 
   return data;
 }
+
+export async function getProduct(productId, signal) {
+  const response = await fetch(`/api/products/${productId}`, {
+    signal,
+  });
+
+  if (response.status === 404) {
+    throw new Error("This product could not be found.");
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Unable to load the product. Server returned ${response.status}.`
+    );
+  }
+
+  return response.json();
+}

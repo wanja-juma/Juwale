@@ -1,5 +1,35 @@
+import { Link, Navigate, Route, Routes } from "react-router-dom";
+
 import Products from "./pages/Products";
+import ProductDetails from "./pages/ProductDetails";
 
 export default function App() {
-  return <Products />;
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={<Navigate to="/products" replace />}
+      />
+
+      <Route
+        path="/products"
+        element={<Products />}
+      />
+
+      <Route
+        path="/products/:id"
+        element={<ProductDetails />}
+      />
+
+      <Route
+        path="*"
+        element={
+          <main className="products-page">
+            <h1>Page not found</h1>
+            <Link to="/products">Back to products</Link>
+          </main>
+        }
+      />
+    </Routes>
+  );
 }
