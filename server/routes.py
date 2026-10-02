@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 from extensions import db
 from models import Category, Product
@@ -21,10 +21,36 @@ def get_categories():
 
 @api.get("/products")
 def get_products():
+    search = request.args.get("search", "").strip()
+    category_id = request.args.get("category_id", "").strip()
+
+    query = db.select(Product).where(
+        Product.is_active.is_(True)
+    )
+
+    if search:
+        query = query.where(
+            Product.name.contains(search, autoescape=True)
+        )
+
+    if category_id:
+        try:
+            category_id = int(category_id)
+
+            if category_id <= 0:
+                raise ValueError
+
+        except ValueError:
+            return jsonify({
+                "message": "category_id must be a positive integer"
+            }), 400
+
+        query = query.where(
+            Product.category_id == category_id
+        )
+
     products = db.session.scalars(
-        db.select(Product)
-        .where(Product.is_active.is_(True))
-        .order_by(Product.id)
+        query.order_by(Product.id)
     ).all()
 
     return jsonify([

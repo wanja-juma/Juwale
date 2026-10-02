@@ -1,18 +1,60 @@
-export async function getProducts(signal) {
-  const response = await fetch("/api/products", {
-    signal,
-  });
-
+async function readResponse(response, fallbackMessage) {
   if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
     throw new Error(
-      `Unable to load products. Server returned ${response.status}.`
+      errorData?.message || fallbackMessage
     );
   }
 
-  const data = await response.json();
+  return response.json();
+}
+
+export async function getProducts(
+  signal,
+  { search = "", categoryId = "" } = {}
+) {
+  const params = new URLSearchParams();
+
+  if (search.trim()) {
+    params.set("search", search.trim());
+  }
+
+  if (categoryId) {
+    params.set("category_id", categoryId);
+  }
+
+  const query = params.toString();
+
+  const response = await fetch(
+    `/api/products${query ? `?${query}` : ""}`,
+    { signal }
+  );
+
+  const data = await readResponse(
+    response,
+    "Unable to load products."
+  );
 
   if (!Array.isArray(data)) {
     throw new Error("The server returned an unexpected product response.");
+  }
+
+  return data;
+}
+
+export async function getCategories(signal) {
+  const response = await fetch("/api/categories", {
+    signal,
+  });
+
+  const data = await readResponse(
+    response,
+    "Unable to load categories."
+  );
+
+  if (!Array.isArray(data)) {
+    throw new Error("The server returned an unexpected category response.");
   }
 
   return data;
@@ -23,15 +65,8 @@ export async function getProduct(productId, signal) {
     signal,
   });
 
-  if (response.status === 404) {
-    throw new Error("This product could not be found.");
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      `Unable to load the product. Server returned ${response.status}.`
-    );
-  }
-
-  return response.json();
+  return readResponse(
+    response,
+    "Unable to load the product."
+  );
 }
