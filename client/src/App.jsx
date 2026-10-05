@@ -3,6 +3,8 @@ import { Link, Navigate, Route, Routes } from "react-router-dom";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 
+import Register from "./pages/Register";
+
 export default function App() {
   return (
     <Routes>
@@ -20,6 +22,11 @@ export default function App() {
         path="/products/:id"
         element={<ProductDetails />}
       />
+
+      <Route
+  path="/register"
+  element={<Register />}
+/>
 
       <Route
         path="*"

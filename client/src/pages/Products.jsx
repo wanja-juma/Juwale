@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import ProductCard from "../components/ProductCard";
 import {
@@ -175,6 +175,10 @@ export default function Products() {
         <p className="products-page__brand">JUWALE</p>
         <h1>Shop our products</h1>
         <p>Discover electronics, fashion, and home essentials.</p>
+
+        <Link className="products-page__register" to="/register">
+          Create an account
+        </Link>
       </header>
 
       <div className="catalogue-filters">
