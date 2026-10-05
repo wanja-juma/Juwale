@@ -19,6 +19,9 @@ export default function Register() {
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -107,6 +110,10 @@ export default function Register() {
 
       setForm({ ...emptyForm });
       setErrors({});
+
+      setShowPassword(false);
+    setShowConfirmPassword(false);
+
     } catch (error) {
       setErrors(error.fieldErrors || {});
       setSubmitError(
@@ -133,6 +140,10 @@ export default function Register() {
           <div className="register-success" role="status">
             <p>{success}</p>
             <Link to="/products">Continue browsing products</Link>
+
+            <p>
+  <Link to="/login">Log in to your new account</Link>
+</p>
           </div>
         )}
 
@@ -196,81 +207,107 @@ export default function Register() {
           </div>
 
           <div className="register-field">
-            <label htmlFor="register-password">Password</label>
+  <label htmlFor="register-password">Password</label>
 
-            <input
-              id="register-password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              autoComplete="new-password"
-              minLength={8}
-              maxLength={128}
-              required
-              disabled={submitting}
-              aria-invalid={Boolean(errors.password)}
-              aria-describedby={
-                errors.password
-                  ? "register-password-hint register-password-error"
-                  : "register-password-hint"
-              }
-            />
+  <div className="password-control">
+    <input
+      id="register-password"
+      name="password"
+      type={showPassword ? "text" : "password"}
+      value={form.password}
+      onChange={handleChange}
+      autoComplete="new-password"
+      minLength={8}
+      maxLength={128}
+      required
+      disabled={submitting}
+      aria-invalid={Boolean(errors.password)}
+      aria-describedby={
+        errors.password
+          ? "register-password-hint register-password-error"
+          : "register-password-hint"
+      }
+    />
 
-            <p id="register-password-hint" className="register-hint">
-              Use 8 to 128 characters.
-            </p>
+    <button
+      className="password-toggle"
+      type="button"
+      onClick={() => setShowPassword((previous) => !previous)}
+      aria-controls="register-password"
+      disabled={submitting}
+    >
+      {showPassword ? "Hide password" : "Show password"}
+    </button>
+  </div>
 
-            {errors.password && (
-              <p
-                id="register-password-error"
-                className="register-field-error"
-              >
-                {errors.password}
-              </p>
-            )}
-          </div>
+  <p id="register-password-hint" className="register-hint">
+    Use 8 to 128 characters.
+  </p>
 
-          <div className="register-field">
-            <label htmlFor="register-confirm-password">
-              Confirm password
-            </label>
+  {errors.password && (
+    <p
+      id="register-password-error"
+      className="register-field-error"
+    >
+      {errors.password}
+    </p>
+  )}
+</div>
 
-            <input
-              id="register-confirm-password"
-              name="confirmPassword"
-              type="password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              autoComplete="new-password"
-              maxLength={128}
-              required
-              disabled={submitting}
-              aria-invalid={Boolean(errors.confirmPassword)}
-              aria-describedby={
-                errors.confirmPassword
-                  ? "register-confirm-password-error"
-                  : undefined
-              }
-            />
+<div className="register-field">
+  <label htmlFor="register-confirm-password">
+    Confirm password
+  </label>
 
-            {errors.confirmPassword && (
-              <p
-                id="register-confirm-password-error"
-                className="register-field-error"
-              >
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
+  <div className="password-control">
+    <input
+      id="register-confirm-password"
+      name="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      value={form.confirmPassword}
+      onChange={handleChange}
+      autoComplete="new-password"
+      maxLength={128}
+      required
+      disabled={submitting}
+      aria-invalid={Boolean(errors.confirmPassword)}
+      aria-describedby={
+        errors.confirmPassword
+          ? "register-confirm-password-error"
+          : undefined
+      }
+    />
 
-          <button
-            className="register-button"
-            type="submit"
-            disabled={submitting}
-          >
-            {submitting ? "Creating account…" : "Create account"}
-          </button>
+    <button
+      className="password-toggle"
+      type="button"
+      onClick={() =>
+        setShowConfirmPassword((previous) => !previous)
+      }
+      aria-controls="register-confirm-password"
+      disabled={submitting}
+    >
+      {showConfirmPassword ? "Hide password" : "Show password"}
+    </button>
+  </div>
+
+  {errors.confirmPassword && (
+    <p
+      id="register-confirm-password-error"
+      className="register-field-error"
+    >
+      {errors.confirmPassword}
+    </p>
+  )}
+</div>
+
+<button
+  className="register-button"
+  type="submit"
+  disabled={submitting}
+>
+  {submitting ? "Creating account…" : "Create account"}
+</button>
         </form>
 
         <Link className="register-back" to="/products">

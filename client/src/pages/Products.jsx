@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-
+import { useAuth } from "../context/authContext";
 import ProductCard from "../components/ProductCard";
 import {
   getCategories,
@@ -93,6 +93,8 @@ export default function Products() {
 
     loadCategories();
 
+    
+
     return () => {
       controller.abort();
     };
@@ -169,6 +171,8 @@ export default function Products() {
     (category) => String(category.id) === categoryId
   );
 
+  const { user, loading: authLoading, sessionError, logout } = useAuth();
+
   return (
     <main className="products-page">
       <header className="products-page__header">
@@ -176,9 +180,37 @@ export default function Products() {
         <h1>Shop our products</h1>
         <p>Discover electronics, fashion, and home essentials.</p>
 
-        <Link className="products-page__register" to="/register">
-          Create an account
-        </Link>
+        {authLoading ? (
+  <p role="status">Checking your session…</p>
+) : user ? (
+  <div>
+    <p>Welcome, {user.name}!</p>
+
+    <button
+      className="products-page__register"
+      type="button"
+      onClick={logout}
+    >
+      Log out
+    </button>
+  </div>
+) : (
+  <div>
+    <Link className="products-page__register" to="/register">
+      Create an account
+    </Link>
+
+    {" "}
+
+    <Link className="products-page__register" to="/login">
+      Log in
+    </Link>
+  </div>
+)}
+
+{sessionError && (
+  <p role="alert">{sessionError}</p>
+)}
       </header>
 
       <div className="catalogue-filters">
