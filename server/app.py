@@ -43,6 +43,13 @@ def create_app():
 
     app.register_blueprint(api, url_prefix="/api")
 
+    from auth_routes import auth
+
+    app.register_blueprint(
+        auth,
+        url_prefix="/api/auth"
+    )
+
     @app.get("/api/health")
     def health_check():
         return jsonify({
