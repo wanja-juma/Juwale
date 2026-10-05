@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Link,
   Navigate,
+  useLocation,
   useNavigate,
 } from "react-router-dom";
 
@@ -12,6 +13,17 @@ import "./Register.css";
 export default function Login() {
   const { user, loading, login } = useAuth();
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+const requestedPath = location.state?.from;
+
+const destination =
+  typeof requestedPath === "string" &&
+  requestedPath.startsWith("/") &&
+  !requestedPath.startsWith("//")
+    ? requestedPath
+    : "/products";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +43,7 @@ export default function Login() {
 
     try {
       await login(email.trim().toLowerCase(), password);
-      navigate("/products", { replace: true });
+      navigate(destination, { replace: true });
     } catch (error) {
       setError(error.message || "Unable to log in.");
     } finally {
@@ -48,8 +60,8 @@ export default function Login() {
   }
 
   if (user) {
-    return <Navigate to="/products" replace />;
-  }
+  return <Navigate to={destination} replace />;
+}
 
   return (
     <main className="register-page">
@@ -79,7 +91,7 @@ export default function Login() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
-              maxLength={255}
+              maxLength={55}
               required
               disabled={submitting}
             />
@@ -92,7 +104,7 @@ export default function Login() {
     value={password}
     onChange={(event) => setPassword(event.target.value)}
     autoComplete="current-password"
-    maxLength={128}
+    maxLength={12}
     required
     disabled={submitting}
   />
@@ -107,6 +119,13 @@ export default function Login() {
     {showPassword ? "Hide password" : "Show password"}
   </button>
 </div>
+<button
+  className="register-button"
+  type="submit"
+  disabled={submitting}
+>
+  {submitting ? "Logging in…" : "Log in"}
+</button>
         </form>
 
         <p>

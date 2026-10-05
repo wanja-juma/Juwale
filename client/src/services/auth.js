@@ -1,3 +1,5 @@
+import { authenticatedRequest } from "./api";
+
 export async function registerUser(userDetails) {
   const response = await fetch("/api/auth/register", {
     method: "POST",
@@ -50,24 +52,10 @@ export async function loginUser(credentials) {
   return data;
 }
 
-export async function getCurrentUser(token, signal) {
-  const response = await fetch("/api/auth/me", {
+export async function getCurrentUser(signal) {
+  const data = await authenticatedRequest("/auth/me", {
     signal,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
-
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    const error = new Error(
-      data?.message || data?.msg || "Unable to verify your session."
-    );
-
-    error.status = response.status;
-    throw error;
-  }
 
   if (!data?.user) {
     throw new Error("The server returned an unexpected user response.");

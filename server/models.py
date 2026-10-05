@@ -103,3 +103,54 @@ class User(db.Model):
             "email": self.email,
             "role": self.role,
         }
+
+
+class CartItem(db.Model):
+    __tablename__ = "cart_items"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("products.id"),
+        nullable=False
+    )
+
+    quantity = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    user = db.relationship("User")
+    product = db.relationship("Product")
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "user_id",
+            "product_id",
+            name="unique_user_cart_product"
+        ),
+        db.CheckConstraint(
+            "quantity > 0",
+            name="positive_cart_quantity"
+        ),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "quantity": self.quantity,
+            "product": self.product.to_dict(),
+            "subtotal_minor": (
+                self.quantity * self.product.price_minor
+            ),
+        }

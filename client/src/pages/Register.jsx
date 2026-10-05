@@ -63,10 +63,10 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     if (
       !form.password.trim() ||
       form.password.length < 8 ||
-      form.password.length > 128
+      form.password.length > 12
     ) {
       nextErrors.password =
-        "Password must contain 8 to 128 characters and cannot be only whitespace.";
+        "Password must contain 8 to 12 characters and cannot be only whitespace.";
     }
 
     if (!form.confirmPassword) {
@@ -190,7 +190,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
               value={form.email}
               onChange={handleChange}
               autoComplete="email"
-              maxLength={255}
+              maxLength={55}
               required
               disabled={submitting}
               aria-invalid={Boolean(errors.email)}
@@ -218,7 +218,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       onChange={handleChange}
       autoComplete="new-password"
       minLength={8}
-      maxLength={128}
+      maxLength={12}
       required
       disabled={submitting}
       aria-invalid={Boolean(errors.password)}
@@ -241,7 +241,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   </div>
 
   <p id="register-password-hint" className="register-hint">
-    Use 8 to 128 characters.
+    Use 8 to 12 characters.
   </p>
 
   {errors.password && (
@@ -267,7 +267,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       value={form.confirmPassword}
       onChange={handleChange}
       autoComplete="new-password"
-      maxLength={128}
+      maxLength={12}
       required
       disabled={submitting}
       aria-invalid={Boolean(errors.confirmPassword)}

@@ -63,6 +63,13 @@ def create_app():
         url_prefix="/api/auth"
     )
 
+    from cart_routes import cart
+
+    app.register_blueprint(
+        cart,
+        url_prefix="/api/cart"
+    )
+
     @app.get("/api/health")
     def health_check():
         return jsonify({

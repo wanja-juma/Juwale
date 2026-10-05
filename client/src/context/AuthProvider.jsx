@@ -6,7 +6,10 @@ import {
   loginUser,
 } from "../services/auth";
 
-const TOKEN_KEY = "juwale_access_token";
+import {
+  SESSION_EXPIRED_EVENT,
+  TOKEN_KEY,
+} from "../services/api";
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -18,31 +21,46 @@ export default function AuthProvider({ children }) {
   const [sessionError, setSessionError] = useState("");
 
   useEffect(() => {
-    const token = sessionStorage.getItem(TOKEN_KEY);
+    const controller = new AbortController();
+    const initialToken = sessionStorage.getItem(TOKEN_KEY);
 
-    if (!token) {
-      return;
+    function handleSessionExpired() {
+      setUser(null);
+      setSessionError(
+        "Your session has expired or is invalid. Please log in again."
+      );
     }
 
-    const controller = new AbortController();
+    window.addEventListener(
+      SESSION_EXPIRED_EVENT,
+      handleSessionExpired
+    );
 
     async function restoreSession() {
       try {
         const currentUser = await getCurrentUser(
-          token,
           controller.signal
         );
 
-        if (!controller.signal.aborted) {
+        if (
+          !controller.signal.aborted &&
+          sessionStorage.getItem(TOKEN_KEY) === initialToken
+        ) {
           setUser(currentUser);
+          setSessionError("");
         }
       } catch (error) {
-        if (!controller.signal.aborted) {
-          if (error.status === 401 || error.status === 422) {
-            sessionStorage.removeItem(TOKEN_KEY);
-          }
-
+        if (
+          !controller.signal.aborted &&
+          sessionStorage.getItem(TOKEN_KEY) === initialToken
+        ) {
           setSessionError(error.message);
+
+          // Flask-JWT-Extended defaults to 422 for malformed tokens.
+          if (error.status === 422) {
+            sessionStorage.removeItem(TOKEN_KEY);
+            setUser(null);
+          }
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -51,10 +69,17 @@ export default function AuthProvider({ children }) {
       }
     }
 
-    restoreSession();
+    if (initialToken) {
+      restoreSession();
+    }
 
     return () => {
       controller.abort();
+
+      window.removeEventListener(
+        SESSION_EXPIRED_EVENT,
+        handleSessionExpired
+      );
     };
   }, []);
 
@@ -72,6 +97,19 @@ export default function AuthProvider({ children }) {
     setSessionError("");
   }
 
+  async function refreshUser() {
+    const token = sessionStorage.getItem(TOKEN_KEY);
+    const currentUser = await getCurrentUser();
+
+    if (
+      token &&
+      sessionStorage.getItem(TOKEN_KEY) === token
+    ) {
+      setUser(currentUser);
+      setSessionError("");
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -80,6 +118,7 @@ export default function AuthProvider({ children }) {
         sessionError,
         login,
         logout,
+        refreshUser,
       }}
     >
       {children}

@@ -186,6 +186,12 @@ export default function Products() {
   <div>
     <p>Welcome, {user.name}!</p>
 
+    <Link className="products-page__register" to="/profile">
+  My profile
+</Link>
+
+{" "}
+
     <button
       className="products-page__register"
       type="button"

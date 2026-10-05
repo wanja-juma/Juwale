@@ -159,6 +159,104 @@ cursor: pointer;
   outline-offset: 3px;
 }
 
+.password-control {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.password-control input {
+  flex: 1;
+  min-width: 0;
+}
+
+.password-toggle {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  color: #a63e0a;
+  background: #fff3e8;
+  border: 1px solid #b9470c;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  background: #ffe5d0;
+}
+
+.password-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.password-toggle:focus-visible {
+  outline: 3px solid #b9470c;
+  outline-offset: 3px;
+}
+
+/* Space between the password field and Log in button */
+.register-field {
+  margin-bottom: 24px;
+}
+
+/* Password input and visibility button */
+.password-control {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.password-control input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 14px;
+  color: #1f2937;
+  background: #f9fafb;
+  border: 1px solid #9ca3af;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.password-control input:focus {
+  background: #ffffff;
+  border-color: #b9470c;
+  outline: 2px solid #b9470c;
+  outline-offset: 2px;
+}
+
+.password-control input[aria-invalid="true"] {
+  border-color: #b91c1c;
+}
+
+.password-toggle {
+  padding: 10px 14px;
+  color: #a63e0a;
+  background: #fff3e8;
+  border: 1px solid #b9470c;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Additional space above the submit button */
+.register-button {
+  margin-top: 8px;
+}
+
+@media (max-width: 400px) {
+  .password-control {
+    flex-wrap: wrap;
+  }
+
+  .password-control input {
+    flex-basis: 100%;
+  }
+}
+
 @media (max-width: 600px) {
   .register-page {
     padding: 24px 16px;
