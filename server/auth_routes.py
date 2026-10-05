@@ -1,5 +1,9 @@
 import re
-
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt_identity,
+    jwt_required,
+)
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
@@ -106,3 +110,72 @@ def register():
         "message": "Account created successfully",
         "user": user.to_dict(),
     }), 201
+
+@auth.post("/login")
+def login():
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({
+            "message": "A JSON object is required"
+        }), 400
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if (
+        not isinstance(email, str)
+        or not email.strip()
+        or len(email) > 255
+        or not isinstance(password, str)
+        or not password
+        or len(password) > 128
+    ):
+        return jsonify({
+            "message": "Email and password are required"
+        }), 400
+
+    email = email.strip().lower()
+
+    user = db.session.scalar(
+        db.select(User).where(User.email == email)
+    )
+
+    if user is None or not user.check_password(password):
+        return jsonify({
+            "message": "Incorrect email or password"
+        }), 401
+
+    access_token = create_access_token(
+        identity=str(user.id)
+    )
+
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token,
+        "user": user.to_dict(),
+    }), 200
+
+
+@auth.get("/me")
+@jwt_required()
+def get_current_user():
+    identity = get_jwt_identity()
+
+    try:
+        user_id = int(identity)
+    except (TypeError, ValueError):
+        return jsonify({
+            "message": "Invalid user identity"
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if user is None:
+        return jsonify({
+            "message": "Account no longer exists"
+        }), 401
+
+    return jsonify({
+        "user": user.to_dict()
+    }), 200

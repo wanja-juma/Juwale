@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import sqlite3
 
@@ -6,7 +7,7 @@ from seed import register_seed_command
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-from extensions import db, migrate
+from extensions import db, migrate, jwt
 
 
 @event.listens_for(Engine, "connect")
@@ -28,12 +29,24 @@ def create_app():
 
     os.makedirs(app.instance_path, exist_ok=True)
 
+    jwt_secret = os.getenv("JWT_SECRET_KEY")
+
+    if not jwt_secret:
+        raise RuntimeError(
+            "Set JWT_SECRET_KEY in server/.env before starting Flask"
+        )
+
+    app.config["JWT_SECRET_KEY"] = jwt_secret
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+
     db.init_app(app)
 
     # Import models so migrations can detect their tables.
     import models
 
     migrate.init_app(app, db)
+
+    jwt.init_app(app)
 
     from seed import register_seed_command
 
