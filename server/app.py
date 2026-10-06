@@ -70,6 +70,13 @@ def create_app():
         url_prefix="/api/cart"
     )
 
+    from order_routes import orders
+
+    app.register_blueprint(
+        orders,
+        url_prefix="/api/orders"
+    )
+
     @app.get("/api/health")
     def health_check():
         return jsonify({
