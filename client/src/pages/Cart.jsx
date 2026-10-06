@@ -244,6 +244,10 @@ export default function Cart() {
             <p>
               Prices and availability are checked again at checkout.
             </p>
+
+            <Link className="cart-checkout" to="/checkout">
+  Proceed to checkout
+</Link>
           </aside>
         </div>
       ) : null}

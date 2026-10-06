@@ -197,6 +197,12 @@ export default function Products() {
 
 {" "}
 
+<Link className="products-page__register" to="/orders">
+  My orders
+</Link>
+
+{" "}
+
     <button
       className="products-page__register"
       type="button"

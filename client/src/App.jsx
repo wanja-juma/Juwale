@@ -8,7 +8,8 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
-
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
 export default function App() {
   return (
     <Routes>
@@ -47,6 +48,24 @@ export default function App() {
   element={
     <ProtectedRoute>
       <Cart />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/checkout"
+  element={
+    <ProtectedRoute>
+      <Checkout />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/orders"
+  element={
+    <ProtectedRoute>
+      <Orders />
     </ProtectedRoute>
   }
 />
