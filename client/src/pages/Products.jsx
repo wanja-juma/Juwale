@@ -191,6 +191,11 @@ export default function Products() {
 </Link>
 
 {" "}
+<Link className="products-page__register" to="/cart">
+  My cart
+</Link>
+
+{" "}
 
     <button
       className="products-page__register"

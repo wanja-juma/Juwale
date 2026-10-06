@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
+import Cart from "./pages/Cart";
 
 export default function App() {
   return (
@@ -37,6 +38,15 @@ export default function App() {
   element={
     <ProtectedRoute>
       <Profile />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/cart"
+  element={
+    <ProtectedRoute>
+      <Cart />
     </ProtectedRoute>
   }
 />

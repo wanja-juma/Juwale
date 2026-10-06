@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { getProduct } from "../services/products";
+import AddToCart from "../components/AddToCart";
 
 import "./ProductDetails.css";
 
@@ -94,6 +95,7 @@ export default function ProductDetails() {
 
           <div className="product-details__content">
             <p className="product-details__brand">JUWALE</p>
+            
 
             <h1>{product.name}</h1>
 
@@ -118,6 +120,8 @@ export default function ProductDetails() {
             <p className="product-details__description">
               {product.description}
             </p>
+            <AddToCart key={product.id} product={product} />
+            
           </div>
         </article>
       ) : null}
