@@ -83,4 +83,14 @@ def create_app():
             "message": "JUWALE API is running"
         }), 200
 
+    from admin_commands import register_admin_commands
+    from admin_routes import admin
+
+    register_admin_commands(app)
+
+    app.register_blueprint(
+        admin,
+        url_prefix="/api/admin"
+    )
+
     return app
