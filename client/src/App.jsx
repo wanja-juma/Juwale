@@ -10,6 +10,8 @@ import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import Admin from "./pages/Admin";
+import AdminRoute from "./components/AdminRoute";
 export default function App() {
   return (
     <Routes>
@@ -67,6 +69,15 @@ export default function App() {
     <ProtectedRoute>
       <Orders />
     </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <Admin />
+    </AdminRoute>
   }
 />
 

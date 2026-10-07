@@ -1,0 +1,101 @@
+.admin-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  color: #1f2937;
+}
+
+.admin-page header {
+  margin-bottom: 28px;
+}
+
+.admin-page a {
+  color: #a63e0a;
+}
+
+.admin-panel {
+  padding: 24px;
+  margin: 20px 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.admin-form {
+  max-width: 600px;
+}
+
+.admin-form fieldset {
+  padding: 0;
+  margin: 0;
+  border: none;
+  min-width: 0;
+}
+
+.admin-form label {
+  display: block;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.admin-form input:not([type="checkbox"]),
+.admin-form textarea,
+.admin-form select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.admin-form textarea {
+  min-height: 100px;
+}
+
+.admin-page .admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.admin-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+.admin-page button {
+  padding: 10px 16px;
+  margin: 6px;
+  color: #ffffff;
+  background: #b9470c;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-page button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-error {
+  color: #b91c1c;
+}
+
+.admin-address {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-page input:focus-visible,
+.admin-page textarea:focus-visible,
+.admin-page select:focus-visible,
+.admin-page button:focus-visible,
+.admin-page a:focus-visible {
+  outline: 3px solid #b9470c;
+  outline-offset: 3px;
+}

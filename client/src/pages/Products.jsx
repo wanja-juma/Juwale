@@ -203,6 +203,16 @@ export default function Products() {
 
 {" "}
 
+{user.role === "admin" && (
+  <>
+    <Link className="products-page__register" to="/admin">
+      Admin dashboard
+    </Link>
+
+    {" "}
+  </>
+)}
+
     <button
       className="products-page__register"
       type="button"
