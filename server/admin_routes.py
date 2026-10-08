@@ -308,3 +308,55 @@ def update_order(order_id):
         "message": "Order updated",
         "order": order.to_dict(),
     }), 200
+
+@admin.get("/categories")
+@admin_required
+def get_admin_categories():
+    categories = db.session.scalars(
+        db.select(Category).order_by(Category.name)
+    ).all()
+
+    return jsonify([
+        category.to_dict()
+        for category in categories
+    ]), 200
+
+
+@admin.post("/categories")
+@admin_required
+def create_category():
+    data = get_body()
+    name = data.get("name")
+
+    if not isinstance(name, str) or not name.strip():
+        abort(400, description="Category name is required")
+
+    name = name.strip()
+
+    if len(name) > 100:
+        abort(
+            400,
+            description="Category name must be at most 100 characters"
+        )
+
+    existing = db.session.scalar(
+        db.select(Category).where(
+            db.func.lower(Category.name) == name.lower()
+        )
+    )
+
+    if existing is not None:
+        abort(
+            409,
+            description="A category with this name already exists"
+        )
+
+    category = Category(name=name)
+
+    db.session.add(category)
+    commit_changes()
+
+    return jsonify({
+        "message": "Category created",
+        "category": category.to_dict(),
+    }), 201

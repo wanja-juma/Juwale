@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import AdminCategoryForm from "../components/AdminCategoryForm";
 
 import {
   getAdminOrders,
@@ -17,6 +18,8 @@ const money = (value) =>
     style: "currency",
     currency: "KES",
   }).format(value / 100);
+
+
 
 function ProductForm({ product, categories, onSaved, onCancel }) {
   const [busy, setBusy] = useState(false);
@@ -329,7 +332,18 @@ export default function Admin() {
           <button type="button" onClick={reload}>Try again</button>
         </div>
       ) : (
+        
         <>
+        <AdminCategoryForm onCreated={reload} />
+
+    <ProductForm
+      key={editing?.id || "new"}
+      product={editing}
+      categories={categories}
+      onSaved={reload}
+      onCancel={() => setEditing(null)}
+    />
+        
           <ProductForm
             key={editing?.id || "new"}
             product={editing}

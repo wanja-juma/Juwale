@@ -26,3 +26,10 @@ export function updateAdminOrder(orderId, details) {
     body: details,
   });
 }
+
+export function createAdminCategory(name) {
+  return authenticatedRequest("/admin/categories", {
+    method: "POST",
+    body: { name },
+  });
+}
