@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminCategoryForm from "../components/AdminCategoryForm";
 
+import ProductImageUpload from "../components/ProductImageUpload";
+
 import {
   getAdminOrders,
   getAdminProducts,
@@ -25,8 +27,15 @@ function ProductForm({ product, categories, onSaved, onCancel }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  const [imageUrl, setImageUrl] = useState(product?.image_url || "");
+const [imageUploading, setImageUploading] = useState(false);
+
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (busy || imageUploading) {
+  return;
+}
 
     const form = event.currentTarget;
     const values = Object.fromEntries(new FormData(form));
@@ -57,7 +66,7 @@ function ProductForm({ product, categories, onSaved, onCancel }) {
           price_minor: priceMinor,
           stock: Number(values.stock),
           category_id: Number(values.category_id),
-          image_url: values.image_url.trim(),
+          image_url: imageUrl.trim(),
           is_active: values.is_active === "on",
         },
         product?.id
@@ -139,15 +148,29 @@ function ProductForm({ product, categories, onSaved, onCancel }) {
           </select>
         </label>
 
-        <label>
-          HTTPS image URL — optional
-          <input
-            name="image_url"
-            type="url"
-            defaultValue={product?.image_url || ""}
-            maxLength={1000}
-          />
-        </label>
+        <ProductImageUpload
+  onUploaded={setImageUrl}
+  onUploadingChange={setImageUploading}
+  disabled={busy}
+/>
+
+<label>
+  Image URL — uploaded or HTTPS
+  <input
+    type="text"
+    value={imageUrl}
+    onChange={(event) => setImageUrl(event.target.value)}
+    maxLength={1000}
+    disabled={imageUploading}
+  />
+</label>
+
+{imageUrl && (
+  <div className="admin-image-preview">
+    <p>Image preview</p>
+    <img src={imageUrl} alt="Product preview" />
+  </div>
+)}
 
         <label className="admin-checkbox">
           <input
@@ -158,14 +181,21 @@ function ProductForm({ product, categories, onSaved, onCancel }) {
           Show in the customer catalogue
         </label>
 
-        <button type="submit">
-          {busy ? "Saving…" : "Save product"}
-        </button>
+        <button
+  type="submit"
+  disabled={busy || imageUploading}
+>
+  {busy ? "Saving…" : "Save product"}
+</button>
 
         {product && (
-          <button type="button" onClick={onCancel}>
-            Cancel edit
-          </button>
+          <button
+  type="button"
+  onClick={onCancel}
+  disabled={imageUploading}
+>
+  Cancel edit
+</button>
         )}
       </fieldset>
 

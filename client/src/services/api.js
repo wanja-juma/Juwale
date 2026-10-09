@@ -13,17 +13,21 @@ export async function authenticatedRequest(
     throw error;
   }
 
+    const isFormData = body instanceof FormData;
+
   const response = await fetch(`/api${path}`, {
     method,
     signal,
     headers: {
       Authorization: `Bearer ${token}`,
-      ...(body !== undefined
+      ...(body !== undefined && !isFormData
         ? { "Content-Type": "application/json" }
         : {}),
     },
     ...(body !== undefined
-      ? { body: JSON.stringify(body) }
+      ? {
+          body: isFormData ? body : JSON.stringify(body),
+        }
       : {}),
   });
 

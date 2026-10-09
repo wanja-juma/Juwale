@@ -99,3 +99,35 @@
   outline: 3px solid #b9470c;
   outline-offset: 3px;
 }
+
+.product-image-upload {
+  padding: 16px;
+  margin-bottom: 20px;
+  background: #fff7ed;
+  border: 1px dashed #b9470c;
+  border-radius: 8px;
+}
+
+.product-image-upload p {
+  color: #616975;
+  font-size: 14px;
+}
+
+.product-image-upload .admin-error {
+  color: #b91c1c;
+}
+
+.admin-image-preview {
+  margin-bottom: 20px;
+}
+
+.admin-image-preview img {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: 200px;
+  object-fit: contain;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}

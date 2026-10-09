@@ -1,5 +1,5 @@
-from datetime import timedelta
 import os
+from datetime import timedelta
 import sqlite3
 
 from flask import Flask, jsonify
@@ -29,12 +29,24 @@ def create_app():
 
     os.makedirs(app.instance_path, exist_ok=True)
 
+    app.config["UPLOAD_FOLDER"] = os.path.join(
+            app.instance_path,
+            "uploads"
+        )
+    
+    os.makedirs(
+            app.config["UPLOAD_FOLDER"],
+            exist_ok=True
+        )
+
     jwt_secret = os.getenv("JWT_SECRET_KEY")
 
     if not jwt_secret:
         raise RuntimeError(
             "Set JWT_SECRET_KEY in server/.env before starting Flask"
         )
+
+      
 
     app.config["JWT_SECRET_KEY"] = jwt_secret
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
@@ -91,6 +103,13 @@ def create_app():
     app.register_blueprint(
         admin,
         url_prefix="/api/admin"
+    )
+
+    from image_routes import images
+
+    app.register_blueprint(
+        images,
+        url_prefix="/api"
     )
 
     return app

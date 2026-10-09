@@ -1,6 +1,8 @@
 from functools import wraps
+import re
+from pathlib import Path
 
-from flask import Blueprint, abort, jsonify, request
+from flask import Blueprint, abort, current_app, jsonify, request
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
@@ -103,20 +105,32 @@ def validate_product(data):
     if db.session.get(Category, values["category_id"]) is None:
         abort(400, description="Category does not exist")
 
-    image_url = data.get("image_url", "")
+        image_url = data.get("image_url", "")
 
-    if (
-        not isinstance(image_url, str)
-        or len(image_url) > 1000
-        or (
+    if not isinstance(image_url, str) or len(image_url) > 1000:
+        abort(400, description="Invalid image URL")
+
+    image_url = image_url.strip()
+
+    if image_url and not image_url.startswith("https://"):
+        match = re.fullmatch(
+            r"/api/uploads/([a-f0-9]{32}\.jpg)",
             image_url
-            and not image_url.startswith("https://")
         )
-    ):
-        abort(
-            400,
-            description="Use an HTTPS image URL or leave it empty"
+
+        if match is None:
+            abort(
+                400,
+                description="Use an uploaded image or an HTTPS image URL"
+            )
+
+        image_path = (
+            Path(current_app.config["UPLOAD_FOLDER"])
+            / match.group(1)
         )
+
+        if not image_path.is_file():
+            abort(400, description="Uploaded image does not exist")
 
     is_active = data.get("is_active", True)
 

@@ -33,3 +33,14 @@ export function createAdminCategory(name) {
     body: { name },
   });
 }
+
+export function uploadProductImage(file) {
+  const formData = new FormData();
+
+  formData.append("image", file);
+
+  return authenticatedRequest("/admin/uploads", {
+    method: "POST",
+    body: formData,
+  });
+}
