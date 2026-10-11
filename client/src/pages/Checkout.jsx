@@ -143,12 +143,9 @@ export default function Checkout() {
         address: form.address.trim(),
       });
 
-      navigate("/orders", {
-        replace: true,
-        state: {
-          placedOrderId: data.order.id,
-        },
-      });
+      navigate(`/orders/${data.order.id}`, {
+  replace: true,
+});
     } catch (error) {
       setErrors(error.fieldErrors || {});
       setSubmitError(error.message || "Unable to place your order.");

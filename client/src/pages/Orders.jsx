@@ -119,6 +119,13 @@ export default function Orders() {
           <article className="orders-panel order-card" key={order.id}>
             <h2>Order #{order.id}</h2>
 
+            <Link
+  className="order-details-link"
+  to={`/orders/${order.id}`}
+>
+  View order →
+</Link>
+
             <p>{formatDate(order.created_at)}</p>
 
             <div className="order-statuses">

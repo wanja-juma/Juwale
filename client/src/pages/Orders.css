@@ -162,6 +162,37 @@
   outline-offset: 3px;
 }
 
+.order-details-link {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.order-details-link:hover {
+  text-decoration: underline;
+}
+
+.order-delivery {
+  margin: 20px 0;
+}
+
+.order-delivery div {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-delivery dt {
+  margin-bottom: 6px;
+  color: #616975;
+  font-weight: 600;
+}
+
+.order-delivery dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 700px) {
   .orders-page {
     padding: 24px 16px;

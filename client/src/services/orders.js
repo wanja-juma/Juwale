@@ -18,3 +18,9 @@ export function getOrders(signal) {
     signal,
   });
 }
+
+export function getOrder(orderId, signal) {
+  return authenticatedRequest(`/orders/${orderId}`, {
+    signal,
+  });
+}

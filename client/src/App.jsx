@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
+import OrderDetails from "./pages/OrderDetails";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Admin from "./pages/Admin";
@@ -31,6 +32,15 @@ export default function App() {
         path="/products/:id"
         element={<ProductDetails />}
       />
+
+      <Route
+  path="/orders/:id"
+  element={
+    <ProtectedRoute>
+      <OrderDetails />
+    </ProtectedRoute>
+  }
+/>
 
       <Route
   path="/register"
