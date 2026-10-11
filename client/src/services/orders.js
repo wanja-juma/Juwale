@@ -1,10 +1,16 @@
 import { authenticatedRequest } from "./api";
 
-export function placeOrder(deliveryDetails) {
-  return authenticatedRequest("/orders", {
-    method: "POST",
-    body: deliveryDetails,
-  });
+import { notifyCartChanged } from "./cart";
+
+export async function placeOrder(deliveryDetails) {
+  try {
+    return await authenticatedRequest("/orders", {
+      method: "POST",
+      body: deliveryDetails,
+    });
+  } finally {
+    notifyCartChanged();
+  }
 }
 
 export function getOrders(signal) {

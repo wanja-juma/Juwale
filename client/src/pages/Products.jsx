@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { useSearchParams } from "react-router-dom";
+
 import ProductCard from "../components/ProductCard";
 import {
   getCategories,
@@ -171,73 +171,17 @@ export default function Products() {
     (category) => String(category.id) === categoryId
   );
 
-  const { user, loading: authLoading, sessionError, logout } = useAuth();
 
   return (
     <main className="products-page">
       <header className="products-page__header">
-        <p className="products-page__brand">JUWALE</p>
-        <h1>Shop our products</h1>
-        <p>Discover electronics, fashion, and home essentials.</p>
+  <h1>Shop our products</h1>
 
-        {authLoading ? (
-  <p role="status">Checking your session…</p>
-) : user ? (
-  <div>
-    <p>Welcome, {user.name}!</p>
+  <p>
+    Discover electronics, fashion, and home essentials.
+  </p>
 
-    <Link className="products-page__register" to="/profile">
-  My profile
-</Link>
-
-{" "}
-<Link className="products-page__register" to="/cart">
-  My cart
-</Link>
-
-{" "}
-
-<Link className="products-page__register" to="/orders">
-  My orders
-</Link>
-
-{" "}
-
-{user.role === "admin" && (
-  <>
-    <Link className="products-page__register" to="/admin">
-      Admin dashboard
-    </Link>
-
-    {" "}
-  </>
-)}
-
-    <button
-      className="products-page__register"
-      type="button"
-      onClick={logout}
-    >
-      Log out
-    </button>
-  </div>
-) : (
-  <div>
-    <Link className="products-page__register" to="/register">
-      Create an account
-    </Link>
-
-    {" "}
-
-    <Link className="products-page__register" to="/login">
-      Log in
-    </Link>
-  </div>
-)}
-
-{sessionError && (
-  <p role="alert">{sessionError}</p>
-)}
+    
       </header>
 
       <div className="catalogue-filters">

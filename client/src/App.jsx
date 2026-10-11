@@ -1,5 +1,5 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
-
+import Navbar from "./components/Navbar";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 
@@ -14,6 +14,8 @@ import Admin from "./pages/Admin";
 import AdminRoute from "./components/AdminRoute";
 export default function App() {
   return (
+    <>
+    <Navbar />
     <Routes>
       <Route
         path="/"
@@ -91,5 +93,6 @@ export default function App() {
         }
       />
     </Routes>
+    </>
   );
 }
