@@ -21,42 +21,72 @@ def get_categories():
 
 @api.get("/products")
 def get_products():
-    search = request.args.get("search", "").strip()
-    category_id = request.args.get("category_id", "").strip()
+    def positive_integer(name, default=None):
+        raw = request.args.get(name)
 
-    query = db.select(Product).where(
+        if raw is None:
+            return default
+
+        try:
+            value = int(raw)
+        except ValueError:
+            raise ValueError(f"{name} must be a positive integer.")
+
+        if value < 1:
+            raise ValueError(f"{name} must be a positive integer.")
+
+        return value
+
+    try:
+        page = positive_integer("page", 1)
+        per_page = positive_integer("per_page", 12)
+        category_id = positive_integer("category_id")
+    except ValueError as error:
+        return jsonify({"message": str(error)}), 400
+
+    if per_page > 48:
+        return jsonify({
+            "message": "per_page must be at most 48."
+        }), 400
+
+    search = request.args.get("search", "").strip()
+
+    statement = db.select(Product).where(
         Product.is_active.is_(True)
     )
 
     if search:
-        query = query.where(
+        statement = statement.where(
             Product.name.contains(search, autoescape=True)
         )
 
-    if category_id:
-        try:
-            category_id = int(category_id)
-
-            if category_id <= 0:
-                raise ValueError
-
-        except ValueError:
-            return jsonify({
-                "message": "category_id must be a positive integer"
-            }), 400
-
-        query = query.where(
+    if category_id is not None:
+        statement = statement.where(
             Product.category_id == category_id
         )
 
-    products = db.session.scalars(
-        query.order_by(Product.id)
-    ).all()
+    statement = statement.order_by(Product.id)
 
-    return jsonify([
-        product.to_dict()
-        for product in products
-    ]), 200
+    pagination = db.paginate(
+        statement,
+        page=page,
+        per_page=per_page,
+        max_per_page=48,
+        error_out=False,
+    )
+
+    return jsonify({
+        "items": [
+            product.to_dict()
+            for product in pagination.items
+        ],
+        "total": pagination.total,
+        "page": pagination.page,
+        "pages": pagination.pages,
+        "per_page": pagination.per_page,
+        "has_next": pagination.has_next,
+        "has_prev": pagination.has_prev,
+    })
 
 
 @api.get("/products/<int:product_id>")

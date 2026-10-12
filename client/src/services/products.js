@@ -12,32 +12,35 @@ async function readResponse(response, fallbackMessage) {
 
 export async function getProducts(
   signal,
-  { search = "", categoryId = "" } = {}
+  { search = "", categoryId = "", page = 1, perPage = 12 } = {}
 ) {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  });
 
   if (search.trim()) {
     params.set("search", search.trim());
   }
 
   if (categoryId) {
-    params.set("category_id", categoryId);
+    params.set("category_id", String(categoryId));
   }
 
-  const query = params.toString();
+  const response = await fetch(`/api/products?${params}`, {
+    signal,
+  });
 
-  const response = await fetch(
-    `/api/products${query ? `?${query}` : ""}`,
-    { signal }
-  );
+  const data = await readResponse(response);
 
-  const data = await readResponse(
-    response,
-    "Unable to load products."
-  );
-
-  if (!Array.isArray(data)) {
-    throw new Error("The server returned an unexpected product response.");
+  if (
+    !data ||
+    !Array.isArray(data.items) ||
+    !Number.isInteger(data.total) ||
+    !Number.isInteger(data.page) ||
+    !Number.isInteger(data.pages)
+  ) {
+    throw new Error("The server returned invalid product data.");
   }
 
   return data;

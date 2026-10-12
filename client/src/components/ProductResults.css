@@ -1,0 +1,44 @@
+.catalogue-count {
+  margin: 1rem 0;
+  color: #555;
+}
+
+.catalogue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.catalogue-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.catalogue-pagination button {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  cursor: pointer;
+}
+
+.catalogue-pagination button:hover:not(:disabled) {
+  border-color: #f68b1e;
+  background: #fff4e8;
+}
+
+.catalogue-pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.catalogue-pagination button:focus-visible {
+  outline: 3px solid #f68b1e;
+  outline-offset: 3px;
+}

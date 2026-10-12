@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-
-import ProductCard from "../components/ProductCard";
-import {
-  getCategories,
-  getProducts,
-} from "../services/products";
+import ProductResults from "../components/ProductResults";
+import { getCategories } from "../services/products";
 
 import "./Products.css";
 
@@ -55,88 +51,42 @@ export default function Products() {
   const search = searchParams.get("search") || "";
   const categoryId = searchParams.get("category_id") || "";
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [attempt, setAttempt] = useState(0);
+ const [categories, setCategories] = useState([]);
+const [categoriesLoading, setCategoriesLoading] = useState(true);
+const [categoriesError, setCategoriesError] = useState("");
+const [categoriesAttempt, setCategoriesAttempt] = useState(0);
 
-  const [categories, setCategories] = useState([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
-  const [categoriesError, setCategoriesError] = useState("");
-  const [categoriesAttempt, setCategoriesAttempt] = useState(0);
+useEffect(() => {
+  const controller = new AbortController();
+
+  async function loadCategories() {
+    try {
+      const data = await getCategories(controller.signal);
+
+      if (!controller.signal.aborted) {
+        setCategories(data);
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setCategoriesError(
+          error.message || "Unable to load categories."
+        );
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        setCategoriesLoading(false);
+      }
+    }
+  }
+
+  loadCategories();
+
+  return () => controller.abort();
+}, [categoriesAttempt]);
 
   // Keep the input in sync with browser Back/Forward navigation.
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadCategories() {
-      setCategoriesLoading(true);
-      setCategoriesError("");
-
-      try {
-        const data = await getCategories(controller.signal);
-
-        if (!controller.signal.aborted) {
-          setCategories(data);
-        }
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setCategoriesError(error.message);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setCategoriesLoading(false);
-        }
-      }
-    }
-
-    loadCategories();
-
-    
-
-    return () => {
-      controller.abort();
-    };
-  }, [categoriesAttempt]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadProducts() {
-      setLoading(true);
-      setError("");
-
-      try {
-        const data = await getProducts(controller.signal, {
-          search,
-          categoryId,
-        });
-
-        if (!controller.signal.aborted) {
-          setProducts(data);
-        }
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setError(
-            error.message || "Something went wrong loading products."
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadProducts();
-
-    return () => {
-      controller.abort();
-    };
-  }, [search, categoryId, attempt]);
-
-  function applySearch(searchValue) {
+ function applySearch(searchValue) {
   const nextParams = new URLSearchParams(searchParams);
 
   if (searchValue) {
@@ -145,32 +95,36 @@ export default function Products() {
     nextParams.delete("search");
   }
 
+  nextParams.delete("page");
   setSearchParams(nextParams);
 }
 
-  function changeCategory(event) {
-    const nextParams = new URLSearchParams(searchParams);
-    const selectedCategory = event.target.value;
+function changeCategory(event) {
+  const nextParams = new URLSearchParams(searchParams);
+  const selectedCategory = event.target.value;
 
-    if (selectedCategory) {
-      nextParams.set("category_id", selectedCategory);
-    } else {
-      nextParams.delete("category_id");
-    }
-
-    setSearchParams(nextParams);
+  if (selectedCategory) {
+    nextParams.set("category_id", selectedCategory);
+  } else {
+    nextParams.delete("category_id");
   }
+
+  nextParams.delete("page");
+  setSearchParams(nextParams);
+}
 
   function clearFilters() {
   setSearchParams({});
 }
-
-  const hasFilters = Boolean(search || categoryId);
-
   const selectedCategoryExists = categories.some(
     (category) => String(category.id) === categoryId
   );
 
+function retryCategories() {
+  setCategoriesLoading(true);
+  setCategoriesError("");
+  setCategoriesAttempt((previous) => previous + 1);
+}
 
   return (
     <main className="products-page">
@@ -240,14 +194,9 @@ export default function Products() {
         <div className="products-message products-message--error">
           <p role="alert">{categoriesError}</p>
 
-          <button
-            type="button"
-            onClick={() =>
-              setCategoriesAttempt((previous) => previous + 1)
-            }
-          >
-            Retry categories
-          </button>
+          <button type="button" onClick={retryCategories}>
+  Retry categories
+</button>
         </div>
       )}
 
@@ -257,60 +206,7 @@ export default function Products() {
         </p>
       )}
 
-      {loading ? (
-        <p className="products-message" role="status">
-          Loading products…
-        </p>
-      ) : error ? (
-        <div className="products-message products-message--error">
-          <p role="alert">{error}</p>
-
-          <button
-            type="button"
-            onClick={() =>
-              setAttempt((previous) => previous + 1)
-            }
-          >
-            Try again
-          </button>
-        </div>
-      ) : products.length === 0 ? (
-        <div className="products-message">
-          <p>
-            {hasFilters
-              ? "No products match your search or category."
-              : "No products are available yet."}
-          </p>
-
-          {hasFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-            >
-              Show all products
-            </button>
-          )}
-        </div>
-      ) : (
-        <>
-          <p className="products-page__count" role="status">
-            {products.length}{" "}
-            {products.length === 1 ? "product" : "products"} found
-          </p>
-
-          <section
-            className="products-grid"
-            aria-label="Available products"
-          >
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-            ))}
-          </section>
-        </>
-      )}
+  <ProductResults />
     </main>
   );
 }
