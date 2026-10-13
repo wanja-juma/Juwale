@@ -224,3 +224,122 @@ def get_order(order_id):
         abort(404, description="Order not found")
 
     return jsonify(order.to_dict()), 200
+
+@orders.post("/<int:order_id>/cancel")
+@jwt_required()
+def cancel_order(order_id):
+    try:
+        user_id = int(get_jwt_identity())
+    except (TypeError, ValueError):
+        return jsonify({"message": "Invalid session."}), 401
+
+    try:
+        # End any read transaction opened during authentication.
+        db.session.rollback()
+
+        # Acquire the SQLite write transaction before reading the order.
+        db.session.execute(text("BEGIN IMMEDIATE"))
+
+        user = db.session.get(User, user_id)
+
+        if user is None:
+            db.session.rollback()
+            return jsonify({
+                "message": "Your account could not be found."
+            }), 401
+
+        order = db.session.scalar(
+            db.select(Order).where(
+                Order.id == order_id,
+                Order.user_id == user_id,
+            )
+        )
+
+        if order is None:
+            db.session.rollback()
+            return jsonify({"message": "Order not found."}), 404
+
+        # A repeated request succeeds without restoring stock again.
+        if order.status == "cancelled":
+            order_data = order.to_dict()
+            db.session.rollback()
+
+            return jsonify({
+                "message": "This order is already cancelled.",
+                "order": order_data,
+            })
+
+        if (
+            order.status != "pending"
+            or order.payment_status != "unpaid"
+        ):
+            db.session.rollback()
+            return jsonify({
+                "message": "Only pending, unpaid orders can be cancelled."
+            }), 409
+
+        # The conditional update also guards against status changes.
+        status_update = db.session.execute(
+            update(Order)
+            .where(
+                Order.id == order_id,
+                Order.user_id == user_id,
+                Order.status == "pending",
+                Order.payment_status == "unpaid",
+            )
+            .values(status="cancelled")
+            .execution_options(synchronize_session=False)
+        )
+
+        if status_update.rowcount != 1:
+            db.session.rollback()
+            return jsonify({
+                "message": "The order changed. Refresh and try again."
+            }), 409
+
+        for item in order.items:
+            stock_update = db.session.execute(
+                update(Product)
+                .where(Product.id == item.product_id)
+                .values(stock=Product.stock + item.quantity)
+                .execution_options(synchronize_session=False)
+            )
+
+            if stock_update.rowcount != 1:
+                db.session.rollback()
+                return jsonify({
+                    "message": (
+                        "Unable to restore stock for an order item. "
+                        "Please contact support."
+                    )
+                }), 409
+
+        # Refresh the order so the response contains its new status.
+        db.session.refresh(order)
+        order_data = order.to_dict()
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Order cancelled successfully.",
+            "order": order_data,
+        })
+
+    except OperationalError:
+        db.session.rollback()
+        return jsonify({
+            "message": (
+                "The database is temporarily busy. "
+                "Refresh the order before trying again."
+            )
+        }), 503
+
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({
+            "message": "Unable to cancel this order."
+        }), 409
+
+    except Exception:
+        db.session.rollback()
+        raise

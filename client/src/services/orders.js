@@ -24,3 +24,9 @@ export function getOrder(orderId, signal) {
     signal,
   });
 }
+
+export function cancelOrder(orderId) {
+  return authenticatedRequest(`/orders/${orderId}/cancel`, {
+    method: "POST",
+  });
+}

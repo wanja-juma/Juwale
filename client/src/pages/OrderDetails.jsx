@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { getOrder } from "../services/orders";
-
+import CancelOrderButton from "../components/CancelOrderButton";
 import "./Orders.css";
 
 const formatPrice = (priceMinor) =>
@@ -67,6 +67,12 @@ function OrderDetailsContent({ orderId }) {
     setLoading(true);
     setError("");
     setAttempt((previous) => previous + 1);
+
+    {order.status === "cancelled" && (
+  <p className="order-cancelled-notice" role="status">
+    This order has been cancelled.
+  </p>
+)}
   }
 
   return (
@@ -168,6 +174,12 @@ function OrderDetailsContent({ orderId }) {
               ? "Cash on delivery"
               : order.payment_method}
           </p>
+
+          <CancelOrderButton
+  key={order.id}
+  order={order}
+  onCancelled={reloadOrder}
+/>
         </article>
       ) : null}
     </main>
