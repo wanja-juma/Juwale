@@ -56,6 +56,10 @@ export default function Navbar() {
                   My orders
                 </NavLink>
 
+                <NavLink to="/wishlist">
+  My wishlist
+</NavLink>
+
                 <NavLink to="/profile" className={linkClass}>
                   My profile
                 </NavLink>

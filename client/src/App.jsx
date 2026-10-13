@@ -11,6 +11,7 @@ import Cart from "./pages/Cart";
 import OrderDetails from "./pages/OrderDetails";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import Wishlist from "./pages/Wishlist";
 import Admin from "./pages/Admin";
 import AdminRoute from "./components/AdminRoute";
 export default function App() {
@@ -90,6 +91,14 @@ export default function App() {
     <AdminRoute>
       <Admin />
     </AdminRoute>
+  }
+/>
+<Route
+  path="/wishlist"
+  element={
+    <ProtectedRoute>
+      <Wishlist />
+    </ProtectedRoute>
   }
 />
 

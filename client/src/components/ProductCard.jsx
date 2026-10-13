@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import SaveToWishlistButton from "./SaveToWishlistButton";
 import { useAuth } from "../context/authContext";
 import { addCartItem } from "../services/cart";
+import "./ProductCard.css";
+
 
 const formatPrice = (priceMinor) =>
   new Intl.NumberFormat("en-KE", {
@@ -120,6 +122,7 @@ export default function ProductCard({ product }) {
                 ? "Out of stock"
                 : "Add to cart"}
           </button>
+          <SaveToWishlistButton key={product.id} product={product} />
         </div>
 
         {notice && (

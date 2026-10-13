@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import SaveToWishlistButton from "../components/SaveToWishlistButton";
 import { getProduct } from "../services/products";
 import AddToCart from "../components/AddToCart";
 
@@ -121,7 +121,7 @@ export default function ProductDetails() {
               {product.description}
             </p>
             <AddToCart key={product.id} product={product} />
-            
+            <SaveToWishlistButton key={product.id} product={product} />
           </div>
         </article>
       ) : null}
