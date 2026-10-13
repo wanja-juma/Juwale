@@ -4,9 +4,9 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from sqlalchemy.exc import IntegrityError, OperationalError
-
+from sqlalchemy import text, update
 from extensions import db
-from models import CartItem, Order, OrderItem, User
+from models import CartItem, Order, OrderItem, Product, User
 
 
 orders = Blueprint("orders", __name__)

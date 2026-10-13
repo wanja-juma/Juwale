@@ -15,7 +15,7 @@ from flask import (
 from PIL import Image, ImageOps, UnidentifiedImageError
 from werkzeug.exceptions import HTTPException
 
-from admin_routes import admin_required
+from routes.admin_routes import admin_required
 
 
 images = Blueprint("images", __name__)

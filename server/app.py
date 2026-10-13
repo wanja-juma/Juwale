@@ -6,7 +6,7 @@ from flask import Flask, jsonify
 from seed import register_seed_command
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-from wishlist_routes import wishlist
+
 from extensions import db, migrate, jwt
 
 
@@ -64,25 +64,25 @@ def create_app():
 
     register_seed_command(app)
 
-    from routes import api
+    from routes.catalogue_routes import api
 
     app.register_blueprint(api, url_prefix="/api")
 
-    from auth_routes import auth
+    from routes.auth_routes import auth
 
     app.register_blueprint(
         auth,
         url_prefix="/api/auth"
     )
 
-    from cart_routes import cart
+    from routes.cart_routes import cart
 
     app.register_blueprint(
         cart,
         url_prefix="/api/cart"
     )
 
-    from order_routes import orders
+    from routes.order_routes import orders
 
     app.register_blueprint(
         orders,
@@ -96,7 +96,7 @@ def create_app():
         }), 200
 
     from admin_commands import register_admin_commands
-    from admin_routes import admin
+    from routes.admin_routes import admin
 
     register_admin_commands(app)
 
@@ -105,12 +105,14 @@ def create_app():
         url_prefix="/api/admin"
     )
 
-    from image_routes import images
+    from routes.image_routes import images
 
     app.register_blueprint(
         images,
         url_prefix="/api"
     )
+
+    from routes.wishlist_routes import wishlist
 
     app.register_blueprint(wishlist)
 
