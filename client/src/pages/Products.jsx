@@ -50,6 +50,7 @@ export default function Products() {
 
   const search = searchParams.get("search") || "";
   const categoryId = searchParams.get("category_id") || "";
+  const sort = searchParams.get("sort") || "newest";
 
  const [categories, setCategories] = useState([]);
 const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -83,6 +84,22 @@ useEffect(() => {
 
   return () => controller.abort();
 }, [categoriesAttempt]);
+
+// This function belongs outside useEffect,
+// but still inside the Products component.
+function changeSort(event) {
+  const nextParams = new URLSearchParams(searchParams);
+  const selectedSort = event.target.value;
+
+  if (selectedSort === "newest") {
+    nextParams.delete("sort");
+  } else {
+    nextParams.set("sort", selectedSort);
+  }
+
+  nextParams.delete("page");
+  setSearchParams(nextParams);
+}
 
   // Keep the input in sync with browser Back/Forward navigation.
 
@@ -180,6 +197,23 @@ function retryCategories() {
             ))}
           </select>
         </div>
+
+        <div className="catalogue-sort">
+  <label htmlFor="product-sort">
+    Sort by
+  </label>
+
+  <select
+    id="product-sort"
+    value={sort}
+    onChange={changeSort}
+  >
+    <option value="newest">Newest products</option>
+    <option value="price_asc">Price: low to high</option>
+    <option value="price_desc">Price: high to low</option>
+    <option value="name_asc">Name: A to Z</option>
+  </select>
+</div>
 
         <button
           className="catalogue-clear"

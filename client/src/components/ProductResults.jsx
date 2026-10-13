@@ -11,6 +11,7 @@ export default function ProductResults() {
 
   const search = searchParams.get("search") || "";
   const categoryId = searchParams.get("category_id") || "";
+  const sort = searchParams.get("sort") || "newest";
   const rawPage = searchParams.get("page") || "1";
   const parsedPage = Number(rawPage);
 
@@ -20,16 +21,17 @@ export default function ProductResults() {
       : 1;
 
   return (
-    <ProductResultsContent
-      key={JSON.stringify([search, categoryId, page])}
-      search={search}
-      categoryId={categoryId}
-      page={page}
-    />
-  );
+  <ProductResultsContent
+    key={JSON.stringify([search, categoryId, page, sort])}
+    search={search}
+    categoryId={categoryId}
+    page={page}
+    sort={sort}
+  />
+);
 }
 
-function ProductResultsContent({ search, categoryId, page }) {
+function ProductResultsContent({ search, categoryId, page, sort, }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [result, setResult] = useState(null);
@@ -46,6 +48,7 @@ function ProductResultsContent({ search, categoryId, page }) {
           search,
           categoryId,
           page,
+          sort,
         });
 
         if (!controller.signal.aborted) {
@@ -65,7 +68,7 @@ function ProductResultsContent({ search, categoryId, page }) {
     loadProducts();
 
     return () => controller.abort();
-  }, [search, categoryId, page, attempt]);
+  }, [search, categoryId, page, sort, attempt]);
 
   function retry() {
     setLoading(true);

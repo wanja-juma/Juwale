@@ -12,11 +12,18 @@ async function readResponse(response, fallbackMessage) {
 
 export async function getProducts(
   signal,
-  { search = "", categoryId = "", page = 1, perPage = 12 } = {}
+  {
+    search = "",
+    categoryId = "",
+    page = 1,
+    perPage = 12,
+    sort = "newest",
+  } = {}
 ) {
   const params = new URLSearchParams({
     page: String(page),
     per_page: String(perPage),
+    sort,
   });
 
   if (search.trim()) {

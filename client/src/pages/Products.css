@@ -307,6 +307,30 @@
   font-size: 14px;
 }
 
+.catalogue-sort {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.catalogue-sort label {
+  font-weight: 600;
+}
+
+.catalogue-sort select {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+}
+
+.catalogue-sort select:focus-visible {
+  outline: 3px solid #f68b1e;
+  outline-offset: 2px;
+}
+
 @media (max-width: 600px) {
   .catalogue-category {
     flex: 1 1 100%;

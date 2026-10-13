@@ -65,7 +65,21 @@ def get_products():
             Product.category_id == category_id
         )
 
-    statement = statement.order_by(Product.id)
+    sort = request.args.get("sort", "newest")
+
+    sort_options = {
+        "newest": (Product.id.desc(),),
+        "price_asc": (Product.price_minor.asc(), Product.id.asc()),
+        "price_desc": (Product.price_minor.desc(), Product.id.asc()),
+        "name_asc": (Product.name.asc(), Product.id.asc()),
+    }
+
+    if sort not in sort_options:
+        return jsonify({
+        "message": "Invalid sort option."
+    }), 400
+
+    statement = statement.order_by(*sort_options[sort])
 
     pagination = db.paginate(
         statement,
