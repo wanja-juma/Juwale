@@ -6,7 +6,7 @@ from flask import Flask, jsonify
 from seed import register_seed_command
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-
+from wishlist_routes import wishlist
 from extensions import db, migrate, jwt
 
 
@@ -111,5 +111,7 @@ def create_app():
         images,
         url_prefix="/api"
     )
+
+    app.register_blueprint(wishlist)
 
     return app
