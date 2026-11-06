@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import WishlistAddToCartButton from "../components/WishlistAddToCartButton";
 
 import {
   getWishlist,
@@ -106,6 +107,7 @@ export default function Wishlist() {
 
         <div className="wishlist-page__actions">
           <Link to="/products">Continue shopping</Link>
+          <Link to="/cart">My cart</Link>
 
           <button
             type="button"
@@ -175,24 +177,27 @@ export default function Wishlist() {
                         : "In stock"}
                   </p>
 
-                  <div className="wishlist-card__actions">
-                    {product.is_active && (
-                      <Link to={`/products/${product.id}`}>
-                        View product
-                      </Link>
-                    )}
+                 <div className="wishlist-card__actions">
+  {product.is_active && (
+    <Link to={`/products/${product.id}`}>
+      View product
+    </Link>
+  )}
 
-                    <button
-                      type="button"
-                      onClick={() => handleRemove(item.id)}
-                      disabled={removingId !== null}
-                      aria-label={`Remove ${product.name} from wishlist`}
-                    >
-                      {removingId === item.id
-                        ? "Removing…"
-                        : "Remove"}
-                    </button>
-                  </div>
+  <WishlistAddToCartButton
+    key={product.id}
+    product={product}
+  />
+
+  <button
+    type="button"
+    onClick={() => handleRemove(item.id)}
+    disabled={removingId !== null}
+    aria-label={`Remove ${product.name} from wishlist`}
+  >
+    {removingId === item.id ? "Removing…" : "Remove"}
+  </button>
+</div>
                 </article>
               );
             })}
