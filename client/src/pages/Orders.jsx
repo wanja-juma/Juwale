@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 import { getOrders } from "../services/orders";
 
@@ -18,6 +18,22 @@ const formatDate = (date) =>
   }).format(new Date(date));
 
 export default function Orders() {
+
+  const orderFilters = [
+  { value: "all", label: "All orders" },
+  { value: "active", label: "Active orders" },
+  { value: "pending", label: "Order placed" },
+  { value: "processing", label: "Processing" },
+  { value: "shipped", label: "Shipped" },
+  { value: "delivered", label: "Delivered" },
+  { value: "cancelled", label: "Cancelled" },
+];
+
+const activeStatuses = new Set([
+  "pending",
+  "processing",
+  "shipped",
+]);
   const location = useLocation();
 
   const [orders, setOrders] = useState([]);
@@ -26,6 +42,53 @@ export default function Orders() {
   const [attempt, setAttempt] = useState(0);
 
   const placedOrderId = location.state?.placedOrderId;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+const requestedStatus = searchParams.get("status") || "all";
+
+const selectedStatus = orderFilters.some(
+  (filter) => filter.value === requestedStatus
+)
+  ? requestedStatus
+  : "all";
+
+const filteredOrders = orders.filter((order) => {
+  if (selectedStatus === "all") {
+    return true;
+  }
+
+  if (selectedStatus === "active") {
+    return activeStatuses.has(order.status);
+  }
+
+  return order.status === selectedStatus;
+});
+
+const selectedFilterLabel = orderFilters.find(
+  (filter) => filter.value === selectedStatus
+).label;
+
+function changeStatusFilter(event) {
+  const nextParams = new URLSearchParams(searchParams);
+  const value = event.target.value;
+
+  if (value === "all") {
+    nextParams.delete("status");
+  } else {
+    nextParams.set("status", value);
+  }
+
+  setSearchParams(nextParams);
+}
+
+function clearStatusFilter() {
+  const nextParams = new URLSearchParams(searchParams);
+
+  nextParams.delete("status");
+
+  setSearchParams(nextParams);
+}
 
   useEffect(() => {
     const controller = new AbortController();
@@ -84,6 +147,32 @@ export default function Orders() {
         </div>
       </header>
 
+      <div className="orders-filters">
+  <div className="orders-filters__field">
+    <label htmlFor="order-status-filter">
+      Filter by status
+    </label>
+
+    <select
+      id="order-status-filter"
+      value={selectedStatus}
+      onChange={changeStatusFilter}
+    >
+      {orderFilters.map((filter) => (
+        <option key={filter.value} value={filter.value}>
+          {filter.label}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  {selectedStatus !== "all" && (
+    <button type="button" onClick={clearStatusFilter}>
+      Show all orders
+    </button>
+  )}
+</div>
+
       {placedOrderId && (
         <p className="orders-success" role="status">
           Order #{placedOrderId} was placed successfully!
@@ -108,60 +197,80 @@ export default function Orders() {
             Try again
           </button>
         </div>
-      ) : orders.length === 0 ? (
-        <div className="orders-panel">
-          <h2>No orders yet</h2>
-          <p>Your purchases will appear here.</p>
-          <Link to="/products">Browse products</Link>
-        </div>
+      ) : filteredOrders.length === 0 ? (
+  <div className="orders-empty">
+    <p>
+      {orders.length === 0
+        ? "You haven’t placed any orders yet."
+        : `No orders found for “${selectedFilterLabel}”.`}
+    </p>
+
+    {selectedStatus !== "all" ? (
+      <button type="button" onClick={clearStatusFilter}>
+        Show all orders
+      </button>
+    ) : (
+      <Link to="/products">Browse products</Link>
+    )}
+  </div>
       ) : (
-        orders.map((order) => (
-          <article className="orders-panel order-card" key={order.id}>
-            <h2>Order #{order.id}</h2>
+        <>
+          <p className="orders-result-count" role="status">
+            Showing {filteredOrders.length} of {orders.length}{" "}
+            {orders.length === 1 ? "order" : "orders"}
+          </p>
 
-            <Link
-  className="order-details-link"
-  to={`/orders/${order.id}`}
->
-  View order →
-</Link>
+          {filteredOrders.map((order) => (
+            <article
+              className="orders-panel order-card"
+              key={order.id}
+            >
+              <h2>Order #{order.id}</h2>
 
-            <p>{formatDate(order.created_at)}</p>
+              <Link
+                className="order-details-link"
+                to={`/orders/${order.id}`}
+              >
+                View order →
+              </Link>
 
-            <div className="order-statuses">
-              <span>Order: {order.status}</span>
-              <span>Payment: {order.payment_status}</span>
-            </div>
+              <p>{formatDate(order.created_at)}</p>
 
-            <ul className="checkout-items">
-              {order.items.map((item) => (
-                <li key={item.id}>
-                  <span>
-                    {item.product_name} × {item.quantity}
-                    <small>
-                      {formatPrice(item.unit_price_minor)} each
-                    </small>
-                  </span>
+              <div className="order-statuses">
+                <span>Order: {order.status}</span>
+                <span>Payment: {order.payment_status}</span>
+              </div>
 
-                  <strong>
-                    {formatPrice(item.subtotal_minor)}
-                  </strong>
-                </li>
-              ))}
-            </ul>
+              <ul className="checkout-items">
+                {order.items.map((item) => (
+                  <li key={item.id}>
+                    <span>
+                      {item.product_name} × {item.quantity}
+                      <small>
+                        {formatPrice(item.unit_price_minor)} each
+                      </small>
+                    </span>
 
-            <p className="order-total">
-              Total: {formatPrice(order.total_minor)}
-            </p>
+                    <strong>
+                      {formatPrice(item.subtotal_minor)}
+                    </strong>
+                  </li>
+                ))}
+              </ul>
 
-            <h3>Delivery details</h3>
-            <p>{order.delivery_name}</p>
-            <p>{order.phone}</p>
-            <p className="order-address">{order.address}</p>
+              <p className="order-total">
+                Total: {formatPrice(order.total_minor)}
+              </p>
 
-            <p>Payment method: Cash on delivery</p>
-          </article>
-        ))
+              <h3>Delivery details</h3>
+              <p>{order.delivery_name}</p>
+              <p>{order.phone}</p>
+              <p className="order-address">{order.address}</p>
+
+              <p>Payment method: Cash on delivery</p>
+            </article>
+          ))}
+        </>
       )}
     </main>
   );
