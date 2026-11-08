@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import OrderProgress from "../components/OrderProgress";
 import { getOrder } from "../services/orders";
 import CancelOrderButton from "../components/CancelOrderButton";
 import "./Orders.css";
@@ -117,6 +117,8 @@ function OrderDetailsContent({ orderId }) {
           <h2>Order #{order.id}</h2>
 
           <p>Placed on {formatDate(order.created_at)}</p>
+
+          <OrderProgress status={order.status} />
 
           <div className="order-statuses">
             <span>Order: {order.status}</span>
