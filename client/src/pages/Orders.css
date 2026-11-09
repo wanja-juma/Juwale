@@ -303,6 +303,46 @@
   text-align: center;
 }
 
+.orders-search {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 280px;
+  gap: 0.5rem;
+}
+
+.orders-search label {
+  font-weight: 600;
+}
+
+.orders-search__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.orders-search__controls input {
+  flex: 1 1 180px;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.orders-search__controls button {
+  flex-shrink: 0;
+}
+
+.orders-search__controls input:focus-visible {
+  outline: 3px solid #f68b1e;
+  outline-offset: 3px;
+}
+
+.orders-search-summary {
+  color: #555;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 700px) {
   .orders-page {
     padding: 24px 16px;
