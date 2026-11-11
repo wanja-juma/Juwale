@@ -4,6 +4,7 @@ import SaveToWishlistButton from "../components/SaveToWishlistButton";
 import { getProduct } from "../services/products";
 import AddToCart from "../components/AddToCart";
 import ProductReviews from "../components/ProductReviews";
+import RelatedProducts from "../components/RelatedProducts";
 
 import "./ProductDetails.css";
 
@@ -111,6 +112,7 @@ export default function ProductDetails() {
               {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
             </p>
             <ProductReviews key={product.id} productId={product.id} />
+            <RelatedProducts key={product.id} product={product} />
 
             <h2>Description</h2>
 
