@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import SaveToWishlistButton from "../components/SaveToWishlistButton";
 import { getProduct } from "../services/products";
 import AddToCart from "../components/AddToCart";
+import ProductReviews from "../components/ProductReviews";
 
 import "./ProductDetails.css";
 
@@ -39,7 +40,7 @@ export default function ProductDetails() {
       } catch (error) {
         if (!controller.signal.aborted) {
           setError(
-            error.message || "Something went wrong loading this product."
+            error.message || "Something went wrong loading this product.",
           );
         }
       } finally {
@@ -87,15 +88,12 @@ export default function ProductDetails() {
                 onError={() => setImageFailed(true)}
               />
             ) : (
-              <span className="product-details__placeholder">
-                JUWALE
-              </span>
+              <span className="product-details__placeholder">JUWALE</span>
             )}
           </div>
 
           <div className="product-details__content">
             <p className="product-details__brand">JUWALE</p>
-            
 
             <h1>{product.name}</h1>
 
@@ -110,10 +108,9 @@ export default function ProductDetails() {
                   : "product-details__stock product-details__stock--empty"
               }
             >
-              {product.stock > 0
-                ? `${product.stock} in stock`
-                : "Out of stock"}
+              {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
             </p>
+            <ProductReviews key={product.id} productId={product.id} />
 
             <h2>Description</h2>
 

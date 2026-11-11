@@ -1,0 +1,133 @@
+.product-reviews {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.product-reviews h2 {
+  margin-top: 0;
+}
+
+.product-reviews__summary,
+.product-review__header,
+.product-reviews__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.product-reviews__summary strong {
+  color: #854300;
+  font-size: 1.3rem;
+}
+
+.product-reviews__list {
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-review {
+  padding: 1rem 0;
+  border-top: 1px solid #eee;
+}
+
+.product-review__header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.product-review__header > span {
+  color: #854300;
+}
+
+.product-review__comment {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.product-reviews__pagination {
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.product-review-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.product-review-form h3,
+.product-review-form p {
+  margin: 0;
+}
+
+.product-review-form label {
+  font-weight: 600;
+}
+
+.product-review-form select,
+.product-review-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.product-review-form select {
+  max-width: 300px;
+}
+
+.product-review-form textarea {
+  resize: vertical;
+}
+
+.product-reviews button {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  cursor: pointer;
+}
+
+.product-review-form button[type="submit"] {
+  border-color: #b84b00;
+  background: #b84b00;
+  color: #fff;
+}
+
+.product-reviews button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.product-reviews button:focus-visible,
+.product-review-form select:focus-visible,
+.product-review-form textarea:focus-visible {
+  outline: 3px solid #f68b1e;
+  outline-offset: 3px;
+}
+
+.product-reviews__error {
+  color: #b42318;
+}
+
+.product-reviews__success {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #ecfdf3;
+  color: #166534;
+}
