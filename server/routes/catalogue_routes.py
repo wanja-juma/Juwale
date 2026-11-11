@@ -15,6 +15,7 @@ def get_categories():
 
 @api.get("/products")
 def get_products():
+    
     def positive_integer(name, default=None):
         raw = request.args.get(name)
 
@@ -42,6 +43,90 @@ def get_products():
         return jsonify({"message": "per_page must be at most 48."}), 400
 
     search = request.args.get("search", "").strip()
+
+    @api.get("/products")
+    def get_products():
+    
+        def positive_integer(name, default=None):
+            raw = request.args.get(name)
+
+        if raw is None:
+            return default
+
+        try:
+            value = int(raw)
+        except ValueError:
+            raise ValueError(f"{name} must be a positive integer.")
+
+        if value < 1:
+            raise ValueError(f"{name} must be a positive integer.")
+
+        return value
+
+    try:
+        page = positive_integer("page", 1)
+        per_page = positive_integer("per_page", 12)
+        category_id = positive_integer("category_id")
+    except ValueError as error:
+        return jsonify({"message": str(error)}), 400
+
+    if per_page > 48:
+        return jsonify({"message": "per_page must be at most 48."}), 400
+
+    search = request.args.get("search", "").strip()
+
+    statement = db.select(Product).where(Product.is_active.is_(True))
+
+    if search:
+        statement = statement.where(Product.name.contains(search, autoescape=True))
+
+    if category_id is not None:
+        statement = statement.where(Product.category_id == category_id)
+
+    sort = request.args.get("sort", "newest")
+
+    sort_options = {
+        "newest": (Product.id.desc(),),
+        "price_asc": (Product.price_minor.asc(), Product.id.asc()),
+        "price_desc": (Product.price_minor.desc(), Product.id.asc()),
+        "name_asc": (Product.name.asc(), Product.id.asc()),
+    }
+    if min_price is not None:
+        statement = statement.where(
+        Product.price_minor >= min_price
+    )
+
+    if max_price is not None:
+        statement = statement.where(
+        Product.price_minor <= max_price
+    )
+
+    if sort not in sort_options:
+        return jsonify({"message": "Invalid sort option."}), 400
+
+    statement = statement.order_by(*sort_options[sort])
+
+    pagination = db.paginate(
+        statement,
+        page=page,
+        per_page=per_page,
+        max_per_page=48,
+        error_out=False,
+    )
+
+    return jsonify(
+        {
+            "items": [product.to_dict() for product in pagination.items],
+            "total": pagination.total,
+            "page": pagination.page,
+            "pages": pagination.pages,
+            "per_page": pagination.per_page,
+            "has_next": pagination.has_next,
+            "has_prev": pagination.has_prev,
+        }
+    )
+
+
 
     statement = db.select(Product).where(Product.is_active.is_(True))
 

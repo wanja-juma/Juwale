@@ -18,6 +18,8 @@ export async function getProducts(
     page = 1,
     perPage = 12,
     sort = "newest",
+    minPrice = "",
+    maxPrice = "",
   } = {}
 ) {
   const params = new URLSearchParams({
@@ -33,6 +35,14 @@ export async function getProducts(
   if (categoryId) {
     params.set("category_id", String(categoryId));
   }
+
+  if (minPrice !== "") {
+  params.set("min_price", minPrice);
+}
+
+if (maxPrice !== "") {
+  params.set("max_price", maxPrice);
+}
 
   const response = await fetch(`/api/products?${params}`, {
     signal,

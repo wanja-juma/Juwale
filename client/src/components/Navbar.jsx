@@ -7,12 +7,7 @@ import { useAuth } from "../context/authContext";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const {
-    user,
-    loading,
-    sessionError,
-    logout,
-  } = useAuth();
+  const { user, loading, sessionError, logout } = useAuth();
 
   const navigate = useNavigate();
 
@@ -35,10 +30,7 @@ export default function Navbar() {
             JUWALE
           </Link>
 
-          <nav
-            className="juwale-nav__links"
-            aria-label="Main navigation"
-          >
+          <nav className="juwale-nav__links" aria-label="Main navigation">
             <NavLink to="/products" className={linkClass}>
               Shop
             </NavLink>
@@ -48,17 +40,15 @@ export default function Navbar() {
             ) : user ? (
               <>
                 <NavLink to="/cart" className={linkClass}>
-  My cart
-  <CartBadge key={user.id} />
-</NavLink>
+                  My cart
+                  <CartBadge key={user.id} />
+                </NavLink>
 
                 <NavLink to="/orders" className={linkClass}>
                   My orders
                 </NavLink>
 
-                <NavLink to="/wishlist">
-  My wishlist
-</NavLink>
+                <NavLink to="/wishlist">My wishlist</NavLink>
 
                 <NavLink to="/profile" className={linkClass}>
                   My profile
@@ -70,9 +60,7 @@ export default function Navbar() {
                   </NavLink>
                 )}
 
-                <span className="juwale-nav__user">
-                  Hi, {user.name}
-                </span>
+                <span className="juwale-nav__user">Hi, {user.name}</span>
 
                 <button
                   className="juwale-nav__logout"

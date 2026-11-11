@@ -12,6 +12,9 @@ export default function ProductResults() {
   const search = searchParams.get("search") || "";
   const categoryId = searchParams.get("category_id") || "";
   const sort = searchParams.get("sort") || "newest";
+  const minPrice = searchParams.get("min_price") || "";
+  const maxPrice = searchParams.get("max_price") || "";
+
   const rawPage = searchParams.get("page") || "1";
   const parsedPage = Number(rawPage);
 
@@ -21,17 +24,33 @@ export default function ProductResults() {
       : 1;
 
   return (
-  <ProductResultsContent
-    key={JSON.stringify([search, categoryId, page, sort])}
-    search={search}
-    categoryId={categoryId}
-    page={page}
-    sort={sort}
-  />
-);
+    <ProductResultsContent
+      key={JSON.stringify([
+        search,
+        categoryId,
+        page,
+        sort,
+        minPrice,
+        maxPrice,
+      ])}
+      search={search}
+      categoryId={categoryId}
+      page={page}
+      sort={sort}
+      minPrice={minPrice}
+      maxPrice={maxPrice}
+    />
+  );
 }
 
-function ProductResultsContent({ search, categoryId, page, sort, }) {
+function ProductResultsContent({
+  search,
+  categoryId,
+  page,
+  sort,
+  minPrice,
+  maxPrice,
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [result, setResult] = useState(null);
@@ -49,6 +68,8 @@ function ProductResultsContent({ search, categoryId, page, sort, }) {
           categoryId,
           page,
           sort,
+          minPrice,
+          maxPrice,
         });
 
         if (!controller.signal.aborted) {
@@ -68,7 +89,15 @@ function ProductResultsContent({ search, categoryId, page, sort, }) {
     loadProducts();
 
     return () => controller.abort();
-  }, [search, categoryId, page, sort, attempt]);
+  }, [
+    search,
+    categoryId,
+    page,
+    sort,
+    minPrice,
+    maxPrice,
+    attempt,
+  ]);
 
   function retry() {
     setLoading(true);
@@ -96,6 +125,7 @@ function ProductResultsContent({ search, categoryId, page, sort, }) {
     return (
       <div>
         <p role="alert">{error}</p>
+
         <button type="button" onClick={retry}>
           Try again
         </button>
@@ -108,14 +138,16 @@ function ProductResultsContent({ search, categoryId, page, sort, }) {
   }
 
   if (result.total === 0) {
-    return <p>No products match your search or category.</p>;
+    return (
+      <p>No products match your search or selected filters.</p>
+    );
   }
 
-  // Products may have been removed since this URL was saved.
   if (result.items.length === 0) {
     return (
       <div>
         <p>This page has no products.</p>
+
         <button type="button" onClick={() => changePage(1)}>
           Return to page 1
         </button>
