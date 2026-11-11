@@ -119,4 +119,8 @@ def create_app():
     from routes.review_routes import reviews
     app.register_blueprint(reviews)
 
+    from routes.delivery_routes import delivery
+
+    app.register_blueprint(delivery)
+
     return app

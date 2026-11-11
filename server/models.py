@@ -399,3 +399,26 @@ class Review(db.Model):
             "comment": self.comment,
             "reviewer_name": self.user.name,
         }
+
+class DeliveryDetails(db.Model):
+    __tablename__ = "delivery_details"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False,
+        unique=True,
+    )
+
+    delivery_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(30), nullable=False)
+    address = db.Column(db.String(1000), nullable=False)
+
+    def to_dict(self):
+        return {
+            "delivery_name": self.delivery_name,
+            "phone": self.phone,
+            "address": self.address,
+        }
