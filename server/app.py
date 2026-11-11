@@ -116,4 +116,7 @@ def create_app():
 
     app.register_blueprint(wishlist)
 
+    from routes.review_routes import reviews
+    app.register_blueprint(reviews)
+
     return app

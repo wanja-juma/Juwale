@@ -352,3 +352,50 @@ class WishlistItem(db.Model):
             "id": self.id,
             "product": self.product.to_dict(),
         }  
+
+
+class Review(db.Model):
+    __tablename__ = "reviews"
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "user_id",
+            "product_id",
+            name="uq_review_user_product",
+        ),
+        db.CheckConstraint(
+            "rating >= 1 AND rating <= 5",
+            name="ck_review_rating_range",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False,
+        index=True,
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("products.id"),
+        nullable=False,
+        index=True,
+    )
+
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.String(2000), nullable=False)
+
+    user = db.relationship("User")
+    product = db.relationship("Product")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "product_id": self.product_id,
+            "rating": self.rating,
+            "comment": self.comment,
+            "reviewer_name": self.user.name,
+        }
