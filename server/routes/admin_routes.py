@@ -1,7 +1,7 @@
 from functools import wraps
 import re
 from pathlib import Path
-
+from sqlalchemy import func
 from flask import Blueprint, abort, current_app, jsonify, request
 from flask_jwt_extended import (
     get_jwt_identity,
@@ -374,3 +374,54 @@ def create_category():
         "message": "Category created",
         "category": category.to_dict(),
     }), 201
+
+@admin.get("/summary")
+@admin_required
+def get_admin_summary():
+    total_orders = db.session.scalar(
+        db.select(func.count(Order.id))
+    )
+
+    pending_orders = db.session.scalar(
+        db.select(func.count(Order.id)).where(
+            Order.status == "pending"
+        )
+    )
+
+    collected_sales = db.session.scalar(
+        db.select(
+            func.coalesce(func.sum(Order.total_minor), 0)
+        ).where(
+            Order.payment_status == "paid",
+            Order.status != "cancelled",
+        )
+    )
+
+    active_products = db.session.scalar(
+        db.select(func.count(Product.id)).where(
+            Product.is_active.is_(True)
+        )
+    )
+
+    low_stock_products = db.session.scalar(
+        db.select(func.count(Product.id)).where(
+            Product.is_active.is_(True),
+            Product.stock.between(1, 5),
+        )
+    )
+
+    out_of_stock_products = db.session.scalar(
+        db.select(func.count(Product.id)).where(
+            Product.is_active.is_(True),
+            Product.stock == 0,
+        )
+    )
+
+    return jsonify({
+        "total_orders": total_orders,
+        "pending_orders": pending_orders,
+        "collected_sales_minor": collected_sales,
+        "active_products": active_products,
+        "low_stock_products": low_stock_products,
+        "out_of_stock_products": out_of_stock_products,
+    })

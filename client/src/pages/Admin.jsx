@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminCategoryForm from "../components/AdminCategoryForm";
-
+import AdminSummary from "../components/AdminSummary";
 import ProductImageUpload from "../components/ProductImageUpload";
 
 import {
@@ -21,21 +21,19 @@ const money = (value) =>
     currency: "KES",
   }).format(value / 100);
 
-
-
 function ProductForm({ product, categories, onSaved, onCancel }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   const [imageUrl, setImageUrl] = useState(product?.image_url || "");
-const [imageUploading, setImageUploading] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
 
     if (busy || imageUploading) {
-  return;
-}
+      return;
+    }
 
     const form = event.currentTarget;
     const values = Object.fromEntries(new FormData(form));
@@ -47,8 +45,7 @@ const [imageUploading, setImageUploading] = useState(false);
     }
 
     const [whole, fraction = ""] = values.price_kes.split(".");
-    const priceMinor =
-      Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
+    const priceMinor = Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
 
     if (!Number.isSafeInteger(priceMinor) || priceMinor < 1) {
       setError("Enter a valid positive price.");
@@ -69,7 +66,7 @@ const [imageUploading, setImageUploading] = useState(false);
           image_url: imageUrl.trim(),
           is_active: values.is_active === "on",
         },
-        product?.id
+        product?.id,
       );
 
       onSaved();
@@ -83,6 +80,7 @@ const [imageUploading, setImageUploading] = useState(false);
   return (
     <form className="admin-panel admin-form" onSubmit={handleSubmit}>
       <h2>{product ? `Edit ${product.name}` : "Add a product"}</h2>
+      <AdminSummary />
 
       <fieldset disabled={busy}>
         <label>
@@ -112,9 +110,7 @@ const [imageUploading, setImageUploading] = useState(false);
             type="number"
             min="0.01"
             step="0.01"
-            defaultValue={
-              product ? (product.price_minor / 100).toFixed(2) : ""
-            }
+            defaultValue={product ? (product.price_minor / 100).toFixed(2) : ""}
             required
           />
         </label>
@@ -149,28 +145,28 @@ const [imageUploading, setImageUploading] = useState(false);
         </label>
 
         <ProductImageUpload
-  onUploaded={setImageUrl}
-  onUploadingChange={setImageUploading}
-  disabled={busy}
-/>
+          onUploaded={setImageUrl}
+          onUploadingChange={setImageUploading}
+          disabled={busy}
+        />
 
-<label>
-  Image URL — uploaded or HTTPS
-  <input
-    type="text"
-    value={imageUrl}
-    onChange={(event) => setImageUrl(event.target.value)}
-    maxLength={1000}
-    disabled={imageUploading}
-  />
-</label>
+        <label>
+          Image URL — uploaded or HTTPS
+          <input
+            type="text"
+            value={imageUrl}
+            onChange={(event) => setImageUrl(event.target.value)}
+            maxLength={1000}
+            disabled={imageUploading}
+          />
+        </label>
 
-{imageUrl && (
-  <div className="admin-image-preview">
-    <p>Image preview</p>
-    <img src={imageUrl} alt="Product preview" />
-  </div>
-)}
+        {imageUrl && (
+          <div className="admin-image-preview">
+            <p>Image preview</p>
+            <img src={imageUrl} alt="Product preview" />
+          </div>
+        )}
 
         <label className="admin-checkbox">
           <input
@@ -181,26 +177,21 @@ const [imageUploading, setImageUploading] = useState(false);
           Show in the customer catalogue
         </label>
 
-        <button
-  type="submit"
-  disabled={busy || imageUploading}
->
-  {busy ? "Saving…" : "Save product"}
-</button>
+        <button type="submit" disabled={busy || imageUploading}>
+          {busy ? "Saving…" : "Save product"}
+        </button>
 
         {product && (
-          <button
-  type="button"
-  onClick={onCancel}
-  disabled={imageUploading}
->
-  Cancel edit
-</button>
+          <button type="button" onClick={onCancel} disabled={imageUploading}>
+            Cancel edit
+          </button>
         )}
       </fieldset>
 
       {error && (
-        <p className="admin-error" role="alert">{error}</p>
+        <p className="admin-error" role="alert">
+          {error}
+        </p>
       )}
     </form>
   );
@@ -242,22 +233,22 @@ function AdminOrderCard({ order, onUpdated }) {
       <h3>Order #{order.id}</h3>
 
       <p>
-        Customer #{order.user_id} · {order.status} ·{" "}
-        {order.payment_status}
+        Customer #{order.user_id} · {order.status} · {order.payment_status}
       </p>
 
       <ul>
         {order.items.map((item) => (
           <li key={item.id}>
-            {item.product_name} × {item.quantity} —{" "}
-            {money(item.subtotal_minor)}
+            {item.product_name} × {item.quantity} — {money(item.subtotal_minor)}
           </li>
         ))}
       </ul>
 
       <strong>Total: {money(order.total_minor)}</strong>
 
-      <p>{order.delivery_name} · {order.phone}</p>
+      <p>
+        {order.delivery_name} · {order.phone}
+      </p>
       <p className="admin-address">{order.address}</p>
 
       {nextStatus === "delivered" && (
@@ -265,9 +256,7 @@ function AdminOrderCard({ order, onUpdated }) {
           <input
             type="checkbox"
             checked={cashCollected}
-            onChange={(event) =>
-              setCashCollected(event.target.checked)
-            }
+            onChange={(event) => setCashCollected(event.target.checked)}
             disabled={busy}
           />
           Delivery completed and cash payment collected
@@ -278,17 +267,16 @@ function AdminOrderCard({ order, onUpdated }) {
         <button
           type="button"
           onClick={advanceOrder}
-          disabled={
-            busy ||
-            (nextStatus === "delivered" && !cashCollected)
-          }
+          disabled={busy || (nextStatus === "delivered" && !cashCollected)}
         >
           {busy ? "Updating…" : `Mark ${nextStatus}`}
         </button>
       )}
 
       {error && (
-        <p className="admin-error" role="alert">{error}</p>
+        <p className="admin-error" role="alert">
+          {error}
+        </p>
       )}
     </article>
   );
@@ -309,12 +297,11 @@ export default function Admin() {
 
     async function loadDashboard() {
       try {
-        const [productData, orderData, categoryData] =
-          await Promise.all([
-            getAdminProducts(controller.signal),
-            getAdminOrders(controller.signal),
-            getCategories(controller.signal),
-          ]);
+        const [productData, orderData, categoryData] = await Promise.all([
+          getAdminProducts(controller.signal),
+          getAdminOrders(controller.signal),
+          getCategories(controller.signal),
+        ]);
 
         if (!controller.signal.aborted) {
           setProducts(productData);
@@ -358,22 +345,25 @@ export default function Admin() {
         <p role="status">Loading dashboard…</p>
       ) : error ? (
         <div className="admin-panel">
-          <p className="admin-error" role="alert">{error}</p>
-          <button type="button" onClick={reload}>Try again</button>
+          <p className="admin-error" role="alert">
+            {error}
+          </p>
+          <button type="button" onClick={reload}>
+            Try again
+          </button>
         </div>
       ) : (
-        
         <>
-        <AdminCategoryForm onCreated={reload} />
+          <AdminCategoryForm onCreated={reload} />
 
-    <ProductForm
-      key={editing?.id || "new"}
-      product={editing}
-      categories={categories}
-      onSaved={reload}
-      onCancel={() => setEditing(null)}
-    />
-        
+          <ProductForm
+            key={editing?.id || "new"}
+            product={editing}
+            categories={categories}
+            onSaved={reload}
+            onCancel={() => setEditing(null)}
+          />
+
           <ProductForm
             key={editing?.id || "new"}
             product={editing}
