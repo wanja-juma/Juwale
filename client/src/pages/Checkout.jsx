@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import UseSavedDeliveryDetails from "../components/UseSavedDeliveryDetails";
 import { useAuth } from "../context/authContext";
 import { getCart } from "../services/cart";
 import { placeOrder } from "../services/orders";
@@ -160,6 +160,22 @@ export default function Checkout() {
     }
   }
 
+  function applySavedDeliveryDetails(details) {
+  setForm((previous) => ({
+    ...previous,
+    delivery_name: details.delivery_name,
+    phone: details.phone,
+    address: details.address,
+  }));
+
+  setErrors((previous) => ({
+    ...previous,
+    delivery_name: "",
+    phone: "",
+    address: "",
+  }));
+}
+
   return (
     <main className="orders-page">
       <header className="orders-header">
@@ -197,6 +213,10 @@ export default function Checkout() {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="checkout-field">
+                <UseSavedDeliveryDetails
+  onApply={applySavedDeliveryDetails}
+  disabled={submitting || uncertainSubmission}
+/>
                 <label htmlFor="delivery-name">
                   Recipient name
                 </label>
@@ -324,6 +344,8 @@ export default function Checkout() {
                 {submitting ? "Placing order…" : "Place order"}
               </button>
             </form>
+
+            
           </section>
 
           <aside className="orders-panel">
@@ -361,6 +383,8 @@ export default function Checkout() {
             )}
           </aside>
         </div>
+
+        
       )}
     </main>
   );

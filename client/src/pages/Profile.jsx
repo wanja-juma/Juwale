@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import DeliveryDetailsForm from "../components/DeliveryDetailsForm";
 import { useAuth } from "../context/authContext";
 
 import "./Profile.css";
@@ -58,6 +58,8 @@ export default function Profile() {
         >
           {refreshing ? "Refreshing…" : "Refresh profile"}
         </button>
+
+        {user && <DeliveryDetailsForm key={user.id} />}
 
         {notice && <p role="status">{notice}</p>}
 

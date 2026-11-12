@@ -1,0 +1,103 @@
+.delivery-details {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.delivery-details h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.delivery-details__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.delivery-details__form label {
+  font-weight: 600;
+}
+
+.delivery-details__form input,
+.delivery-details__form textarea {
+  width: 100%;
+  max-width: 540px;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.delivery-details__form textarea {
+  resize: vertical;
+}
+
+.delivery-details__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.delivery-details button,
+.delivery-details-picker button {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  cursor: pointer;
+}
+
+.delivery-details .delivery-details__primary {
+  border-color: #b84b00;
+  background: #b84b00;
+  color: #fff;
+}
+
+.delivery-details button:disabled,
+.delivery-details-picker button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delivery-details input:focus-visible,
+.delivery-details textarea:focus-visible,
+.delivery-details button:focus-visible,
+.delivery-details-picker button:focus-visible {
+  outline: 3px solid #f68b1e;
+  outline-offset: 3px;
+}
+
+.delivery-details__remove {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.delivery-details-picker {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff8f0;
+}
+
+.delivery-details-picker__hint {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.delivery-details__error {
+  color: #b42318;
+}
+
+.delivery-details__notice {
+  color: #166534;
+}
