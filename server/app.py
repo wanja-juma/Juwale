@@ -1,7 +1,8 @@
 import os
 from datetime import timedelta
 import sqlite3
-
+from pathlib import Path
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from seed import register_seed_command
 from sqlalchemy import event
@@ -20,6 +21,7 @@ def enable_sqlite_foreign_keys(connection, connection_record):
 
 def create_app():
     app = Flask(__name__)
+    load_dotenv(Path(__file__).resolve().parent / ".env")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
         "sqlite:///juwale.db"
